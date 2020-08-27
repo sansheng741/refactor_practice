@@ -52,7 +52,7 @@ function generateData(invoice, plays) {
 }
 
 
-function printHTML(data) {
+function printTXT(data) {
     let result = `Statement for ${data.customer}\n`;
     result += data.result;
     result += `Amount owed is ${formatResult(data.totalAmount)}\n`;
@@ -62,7 +62,7 @@ function printHTML(data) {
 
 function statement(invoice, plays) {
     let data = generateData(invoice, plays);
-    return printHTML(data);
+    return printTXT(data);
 }
 
 
