@@ -36,7 +36,7 @@ function formatResult(amount) {
 }
 
 
-function generateDetail(invoice, plays) {
+function generateData(invoice, plays) {
     let totalAmount = 0;
     let volumeCredits = 0;
     let result = '';
@@ -61,7 +61,7 @@ function printHTML(data) {
 }
 
 function statement(invoice, plays) {
-    let data = generateDetail(invoice, plays);
+    let data = generateData(invoice, plays);
     return printHTML(data);
 }
 
