@@ -26,25 +26,28 @@ function countAmount(play,perf){
   return thisAmount;
 }
 
-function statement (invoice, plays) {
-  let totalAmount = 0;
-  let volumeCredits = 0;
-  let result = `Statement for ${invoice.customer}\n`;
+function formatResult(amount) {
   const format = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
     minimumFractionDigits: 2,
   }).format;
+  return format(amount / 100);
+}
+
+function statement (invoice, plays) {
+  let totalAmount = 0;
+  let volumeCredits = 0;
+  let result = `Statement for ${invoice.customer}\n`;
   for (let perf of invoice.performances) {
     const play = plays[perf.playID];
     let thisAmount = countAmount(play,perf);
 
     volumeCredits = countCredits(volumeCredits, perf, play);
-    //print line for this order
-    result += ` ${play.name}: ${format(thisAmount / 100)} (${perf.audience} seats)\n`;
+    result += ` ${play.name}: ${formatResult(thisAmount)} (${perf.audience} seats)\n`;
     totalAmount += thisAmount;
   }
-  result += `Amount owed is ${format(totalAmount / 100)}\n`;
+  result += `Amount owed is ${formatResult(totalAmount)}\n`;
   result += `You earned ${volumeCredits} credits \n`;
   return result;
 }
