@@ -39,13 +39,14 @@ function formatResult(amount) {
 function generateData(invoice, plays) {
     let totalAmount = 0;
     let volumeCredits = 0;
-    let result = '';
+    let result = [];
     let customer = invoice.customer;
     for (let perf of invoice.performances) {
         const play = plays[perf.playID];
         let thisAmount = countAmount(play, perf);
         volumeCredits = countCredits(volumeCredits, perf, play);
-        result += ` ${play.name}: ${formatResult(thisAmount)} (${perf.audience} seats)\n`;
+        result.push({name: play.name, amount: formatResult(thisAmount), audience: perf.audience})
+        // result += ` ${play.name}: ${formatResult(thisAmount)} (${perf.audience} seats)\n`;
         totalAmount += thisAmount;
     }
     return {volumeCredits, result, totalAmount, customer};
@@ -54,9 +55,25 @@ function generateData(invoice, plays) {
 
 function printTXT(data) {
     let result = `Statement for ${data.customer}\n`;
-    result += data.result;
+    for (let d of data.result) {
+        result += ` ${d.name}: ${d.amount} (${d.audience} seats)\n`;
+    }
     result += `Amount owed is ${formatResult(data.totalAmount)}\n`;
     result += `You earned ${data.volumeCredits} credits \n`;
+    return result;
+}
+
+function printHTML(data) {
+    let result = `<h1>Statement for ${data.customer}</h1>\n` +
+        '<table>\n' +
+        '<tr><th>play</th><th>seats</th><th>cost</th></tr>';
+
+    for(let d of data.result){
+        result += ` <tr><td>${d.name}</td><td>${d.audience}</td><td>${d.amount}</td></tr>\n`
+    }
+     result += '</table>\n' +
+        `<p>Amount owed is <em>${formatResult(data.totalAmount)}</em></p>\n` +
+        `<p>You earned <em>${data.volumeCredits}</em> credits</p>\n`;
     return result;
 }
 
@@ -65,7 +82,12 @@ function statement(invoice, plays) {
     return printTXT(data);
 }
 
+function htmlStatement(invoice, plays) {
+    let data = generateData(invoice, plays);
+    return printHTML(data);
+}
 
 module.exports = {
     statement,
+    htmlStatement,
 };
