@@ -35,21 +35,33 @@ function formatResult(amount) {
   return format(amount / 100);
 }
 
-function statement (invoice, plays) {
+
+function generateDetail(invoice, plays,result) {
   let totalAmount = 0;
   let volumeCredits = 0;
-  let result = `Statement for ${invoice.customer}\n`;
   for (let perf of invoice.performances) {
     const play = plays[perf.playID];
-    let thisAmount = countAmount(play,perf);
+    let thisAmount = countAmount(play, perf);
 
     volumeCredits = countCredits(volumeCredits, perf, play);
     result += ` ${play.name}: ${formatResult(thisAmount)} (${perf.audience} seats)\n`;
     totalAmount += thisAmount;
   }
-  result += `Amount owed is ${formatResult(totalAmount)}\n`;
-  result += `You earned ${volumeCredits} credits \n`;
+  return {volumeCredits, result, totalAmount};
+}
+
+
+function printHTML(data) {
+  let result = `Statement for ${data.invoice.customer}\n`;
+  const __ret = generateDetail(data.invoice, data.plays,result);
+  result = __ret.result;
+  result += `Amount owed is ${formatResult(__ret.totalAmount)}\n`;
+  result += `You earned ${__ret.volumeCredits} credits \n`;
   return result;
+}
+
+function statement (invoice, plays) {
+  return printHTML({invoice, plays});
 }
 
 
