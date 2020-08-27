@@ -36,9 +36,10 @@ function formatResult(amount) {
 }
 
 
-function generateDetail(invoice, plays,result) {
+function generateDetail(invoice, plays) {
   let totalAmount = 0;
   let volumeCredits = 0;
+  let result = '';
   for (let perf of invoice.performances) {
     const play = plays[perf.playID];
     let thisAmount = countAmount(play, perf);
@@ -53,8 +54,8 @@ function generateDetail(invoice, plays,result) {
 
 function printHTML(data) {
   let result = `Statement for ${data.invoice.customer}\n`;
-  const __ret = generateDetail(data.invoice, data.plays,result);
-  result = __ret.result;
+  const __ret = generateDetail(data.invoice, data.plays);
+  result += __ret.result;
   result += `Amount owed is ${formatResult(__ret.totalAmount)}\n`;
   result += `You earned ${__ret.volumeCredits} credits \n`;
   return result;
